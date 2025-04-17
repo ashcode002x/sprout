@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:14
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+
+  django:
+    build:
+      context: .
+      dockerfile: Dockerfile.django
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
+      - DEBUG=${DEBUG}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+      - DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE}
+      - DB_ENGINE=${DB_ENGINE}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - MEDIA_ROOT=${MEDIA_ROOT}
+      - STATIC_ROOT=${STATIC_ROOT}
+    command: >
+      sh -c "mkdir -p /app/staticfiles /app/media /app/static &&
+             python manage.py migrate &&
+             python manage.py collectstatic --noinput &&
+             python manage.py runserver 0.0.0.0:8000"
+    restart: unless-stopped
+
+  socketio:
+    build:
+      context: .
+      dockerfile: Dockerfile.flask
+    volumes:
+      - ./flask-sock-connection:/app
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_DEBUG=${FLASK_DEBUG}
+      - FLASK_SECRET_KEY=${FLASK_SECRET_KEY}
+      - SOCKET_CORS_ALLOWED_ORIGINS=${SOCKET_CORS_ALLOWED_ORIGINS}
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

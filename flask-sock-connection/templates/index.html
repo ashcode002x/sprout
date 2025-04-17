@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sprout</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { padding-top: 20px; }
+        .meeting-card { margin-bottom: 20px; }
+        .btn-join { width: 100%; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="mb-4">Sprout</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Create New Meeting</h4>
+                    </div>
+                    <div class="card-body">
+                        <button id="createMeeting" class="btn btn-primary btn-lg">Create Instant Meeting</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Join Meeting</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="input-group mb-3">
+                            <input type="text" id="meetingId" class="form-control" placeholder="Enter Meeting ID">
+                            <button id="joinMeeting" class="btn btn-success">Join</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.4.1/socket.io.min.js"></script>
+    <script>
+        document.getElementById('createMeeting').addEventListener('click', function() {
+            // Generate a meeting ID and redirect to it
+            const meetingId = Math.random().toString(36).substring(2, 12);
+            window.location.href = `/join/${meetingId}`;
+        });
+        
+        document.getElementById('joinMeeting').addEventListener('click', function() {
+            const meetingId = document.getElementById('meetingId').value.trim();
+            if (meetingId) {
+                window.location.href = `/join/${meetingId}`;
+            } else {
+                alert('Please enter a valid Meeting ID');
+            }
+        });
+    </script>
+</body>
+</html>

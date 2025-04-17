@@ -1,0 +1,16 @@
+FROM python:3.13.2
+
+WORKDIR /app
+
+# Install dependencies
+COPY flask-sock-connection/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy project files
+COPY flask-sock-connection/ .
+
+# Expose port
+EXPOSE 5000
+
+# Run Flask Socket.IO server
+CMD ["python", "app.py"]

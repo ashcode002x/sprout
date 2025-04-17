@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ meeting.name }} | Sprout{% endblock %}
+
+{% block extra_css %}
+<style>
+    .permission-badge {
+        margin-right: 8px;
+        margin-bottom: 8px;
+        padding: 6px 12px;
+        font-size: 0.875rem;
+    }
+    .join-btn {
+        font-size: 1.25rem;
+    }
+    .meeting-info {
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    .meeting-id {
+        font-family: monospace;
+        font-weight: bold;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <h1 class="mb-4">{{ meeting.name }}</h1>
+        
+        <div class="meeting-info">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <h5>Meeting ID</h5>
+                    <p class="meeting-id">{{ meeting.id }}</p>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <h5>Meeting Type</h5>
+                    <p>{{ meeting.get_meeting_type_display }}</p>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <h5>Start Time</h5>
+                    <p>{{ meeting.start_time|date:"F j, Y, g:i a" }}</p>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <h5>End Time</h5>
+                    <p>{{ meeting.end_time|date:"F j, Y, g:i a" }}</p>
+                </div>
+            </div>
+            
+            {% if meeting.description %}
+            <div class="mb-3">
+                <h5>Description</h5>
+                <p>{{ meeting.description }}</p>
+            </div>
+            {% endif %}
+            
+            <div>
+                <h5>Participant Permissions</h5>
+                <div>
+                    {% for permission in meeting.permissions %}
+                    <span class="badge bg-info permission-badge">{{ permission }}</span>
+                    {% empty %}
+                    <p>No permissions set.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            <a href="{% url 'meeting:join-meeting' meeting_id=meeting.id %}" class="btn btn-primary join-btn">Join Meeting</a>
+            <button class="btn btn-outline-secondary" onclick="copyMeetingId()">Copy Meeting ID</button>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-light">
+                <h4 class="mb-0">Share Meeting</h4>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label">Meeting Link</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="meetingLink" value="{{ request.scheme }}://{{ request.get_host }}{% url 'meeting:meeting' meeting_id=meeting.id %}" readonly>
+                        <button class="btn btn-outline-secondary" type="button" onclick="copyMeetingLink()">
+                            Copy
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="d-grid gap-2">
+                    <a href="#" class="btn btn-outline-primary">
+                        <i class="bi bi-envelope"></i> Email
+                    </a>
+                    <a href="#" class="btn btn-outline-info">
+                        <i class="bi bi-calendar"></i> Add to Calendar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function copyMeetingId() {
+        navigator.clipboard.writeText('{{ meeting.id }}').then(function() {
+            alert('Meeting ID copied to clipboard!');
+        });
+    }
+    
+    function copyMeetingLink() {
+        const linkInput = document.getElementById('meetingLink');
+        linkInput.select();
+        navigator.clipboard.writeText(linkInput.value).then(function() {
+            alert('Meeting link copied to clipboard!');
+        });
+    }
+</script>
+{% endblock %}
