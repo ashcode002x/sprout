@@ -167,4 +167,4 @@ def handle_raise_hand():
     }, room=room)
 
 if __name__ == '__main__':
-    socketio.run(app, debug=os.environ.get("FLASK_DEBUG", "True")=="True")
+    socketio.run(app, debug=os.environ.get("FLASK_DEBUG", "True")=="True", host=os.environ.get("FLASK_HOST", "0.0.0.0"))
