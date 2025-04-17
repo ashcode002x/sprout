@@ -2,8 +2,6 @@
 
 A modern web-based meeting platform that enables real-time communication and collaboration.
 
-![Sprout](https://via.placeholder.com/800x400?text=Sprout+Meeting+Platform)
-
 ## ✨ Features
 
 - **Real-time Communication**: Connect with participants seamlessly
