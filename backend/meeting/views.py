@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import MeetingForm
 from .models import Meeting
 from django.http import HttpResponseRedirect
+import os
 # Create your views here.
 
 def home(request):
@@ -33,5 +34,5 @@ def meeting(request, meeting_id):
 def join_meeting(request, meeting_id):
     """Render the join meeting page with video conference interface"""
     meeting = Meeting.objects.get(id=meeting_id)
-    context = {'meeting': meeting}
+    context = {'meeting': meeting,'socket_server_url': os.environ.get('SOCKET_SERVER_URL', 'http://127.0.0.1:5000')}
     return render(request, 'join-meeting.html', context)
