@@ -74,9 +74,3 @@ databases:
     databaseName: sprout_db
     user: sprout_user
     plan: starter
-
-# Disk storage for media files
-disks:
-  - name: sprout-media
-    mountPath: /var/www/media
-    sizeGB: 10
